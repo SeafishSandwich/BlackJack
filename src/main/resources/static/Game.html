@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Blackjack Web</title>
+  <style>
+    body {
+        font-family: Zpix;
+        text-align: center;
+        height: 100vh;
+        margin: 0;
+        background-color: goldenrod;
+        background-repeat: no-repeat;
+        background-image: url(Background.png);
+        background-size: 90%;
+        background-position: center;
+    }
+
+    .card-area {
+        margin: 20px;
+        font-size: 1.2em;
+    }
+
+    button {
+        margin: 5px;
+        padding: 10px 20px;
+        font-size: 1em;
+    }
+
+    table {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 210px;
+        background-image: url('Frame.png');
+        background-size: 100% 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-width: 330px;
+        border: none;
+        font-size: 16px;
+        padding: 0;
+        margin: 0;
+        background-color: transparent;
+        color: white;
+        font-family: Zpix;
+        border-collapse: collapse;
+        table-layout: auto;
+        width: auto;
+
+    }
+
+    .cards {
+        margin-top: 10px;
+        font-weight: bold;
+        font-family: Zpix;
+    }
+
+    @font-face {
+        font-family: 'Zpix';
+        src: url('zpix.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    .button {
+        width: 130px;
+        height: 70px;
+        background-image: url('Button.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+        border: none;
+        font-size: 16px;
+        padding: 0;
+        margin: 0;
+        background-color: transparent;
+        color: white;
+        font-family: 'Zpix';
+        src: url('zpix.ttf') format('truetype');
+        ;
+    }
+
+    .button:active {
+        transform: scale(0.98);
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .result {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 240px;
+        height: 90px;
+        background-image: url('Result.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+        border: none;
+        font-size: 16px;
+        padding: 0;
+        margin: 0;
+        background-color: transparent;
+        color: red;
+        font-family: 'Zpix';
+        src: url('zpix.ttf') format('truetype');
+        ;
+
+    }
+
+    td,
+    th {
+        padding: 0;
+        margin: 0;
+        line-height: 3;
+        vertical-align: top;
+    }
+
+    td * {
+        margin: 0;
+        padding: 0;
+        line-height: 3;
+        white-space: nowrap;
+    }
+  </style>
+</head>
+
+<body>
+<div class="card-area">
+  <div>
+    <table
+            style="color: darkblue; position: absolute; bottom: 0; left:50%; transform: translateX(-50%); border-collapse: collapse;">
+      <tr>
+        <td>
+          <strong>あなたの手札:</strong>
+        </td>
+        <td>
+          <div style="line-height: 3;" id="playerCards" class="cards"></div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div>あなたの点数: </div>
+        </td>
+        <td>
+          <span id="playerTotal"></span>
+        </td>
+      </tr>
+      <tr>
+        <td style="margin: auto;">
+          <img style="margin: auto; width: 40px; height: 40px;" src="coin.png" alt=""> あなたのチップ:
+        </td>
+        <td>
+          <span id="accumulation"></span>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div>
+    <img id="dealerCat" style="position: absolute; left: 50%; top:5%; transform: translateX(-50%); width: 240px;
+			height: 135px;" src="Dealer_home.png">
+
+  </div>
+  <div>
+    <table style="color: gold; position: absolute; left: 50%; top:20%; transform: translateX(-50%); ">
+      🃏 Blackjack
+      <tr>
+        <td>
+          <strong>ディーラーの手札:</strong>
+        </td>
+        <td>
+          <span style="line-height: 3;" id="dealerCards" class="cards"></span>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>
+          <div>ディーラーの点数: </div>
+        </td>
+        <td>
+          <span id="dealerTotal"></span>
+        </td>
+      </tr>
+      <tr>
+        <td style="margin: auto; padding: 2px;">
+          <img style=" width: 40px; height: 40px;" src="coin.png" alt=""> チップ：
+        </td>
+        <td>
+          <span id="accumulationD"></span>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div>
+    <table style="position: absolute; bottom: 40%; left:100%; transform: translateX(-100%); border-collapse: collapse;
+		width: 220px;height: 140px;">
+      <tr>
+        <td>
+          <strong>モブの手札:</strong>
+        </td>
+        <td>
+          <span style="line-height: 3;" id="autoPlayerCards" class="cards"></span>
+        </td>
+      </tr>
+
+    </table>
+  </div>
+
+  <div>
+			<span class="result" style="position: absolute; left: 50%; bottom: 30%; transform: translateX(-50%)"
+                  id="status">結果：</span>
+  </div>
+
+  <div id = "helpMessage" class="result" style="position: absolute; left: 80%; bottom: 20%; transform: translateX(-50%)">
+            <span>Rate to BUST:</span>
+            <span id = "getHelp"></span>
+  </div>
+
+</div>
+
+<button style="position: absolute; left: 80%; bottom: 10%;" class="button" onclick="startGame()"
+        id="start">ゲームスタート</button>
+<button style="position: absolute; left: 70%; bottom: 10%;" class="button" onclick="hit()" id="hit">ヒット</button>
+<button style="position: absolute; left: 90%; bottom: 10%;" class="button" onclick="stand()"
+        id="stand">スタンド</button>
+<button style="position: absolute; left: 80%; bottom: 10%;" class="button" onclick="stand()" id="bust">BUST</button>
+<button style="position: absolute; left: 80%; bottom: 10%;" class="button" onclick="judge()" id="judge">勝負！</button>
+<button style="position: absolute; left: 80%; bottom: 10%;" class="button" onclick="stand()" id="blackjack">BLACK
+  JACK！</button>
+<button style="color: red; position: absolute; left: 80%; bottom: 10%;" class="button" onclick="cheat()" id="help">HELP!</button>
+
+<div style="align-items: end;">
+
+  <a style="position: absolute; left: 83%; bottom: 7%;background-color:black; color: whitesmoke;"
+     href="start.html">Home</a>
+</div>
+
+<script>
+  let playerPoint = document.getElementById("playerTotal");
+  let startButton = document.getElementById("start");
+  let accumulation = document.getElementById("accumulation");
+  let bustButton = document.getElementById("bust");
+  let dealerPic = document.getElementById("dealerCat");
+
+  document.getElementById("bust").style.display = "none";
+  document.getElementById("hit").style.display = "none";
+  document.getElementById("stand").style.display = "none";
+  document.getElementById("judge").style.display = "none";
+  document.getElementById("blackjack").style.display = "none";
+  document.getElementById("help").style.display = "none";
+  document.getElementById("helpMessage").style.display = "none";
+
+  function updateUIPlayer(data) {
+      // Player' cards and points
+      // document.getElementById("playerCards").textContent = data.playerHandList.join(", ");
+      const cardContainer = document.getElementById("playerCards");
+      cardContainer.innerHTML = "";
+      data.playerHandList.forEach(card => {
+          const img = document.createElement("img");
+          img.src = "Cards/" + convertToFilename(card);
+          img.alt = card;
+          img.style.height = "30px";
+          cardContainer.appendChild(img);
+      });
+      document.getElementById("playerTotal").textContent = data.playerPoints;
+  }
+  function updateUIPlayerFinal(data) {
+      //player's final total
+      playerPoint.textContent = "Player Final Points"
+      document.getElementById("playerTotal").textContent = data.playerPoints;
+      accumulation.textContent = data.accumulationPlayer;
+      accumulationD.textContent = data.accumulationDealer;
+  }
+  function updateUIAutoPlayer(data) {
+      const cardContainerA = document.getElementById("autoPlayerCards");
+      cardContainerA.innerHTML = "";
+      data.autoPlayerHandList.forEach(card => {
+          const img = document.createElement("img");
+          img.src = "Cards/" + convertToFilename(card);
+          img.alt = card;
+          img.style.height = "30px";
+          cardContainerA.appendChild(img);
+      });
+}
+
+  function updateUIDealer(data) {
+      // Dealer cards and points
+      const cardContainerD = document.getElementById("dealerCards");
+      cardContainerD.innerHTML = "";
+      if (data.gameOver) {
+          data.dealerHandList.forEach(card => {
+              const img = document.createElement("img");
+              img.src = "Cards/" + convertToFilename(card);
+              img.alt = card;
+              img.style.height = "30px";
+              cardContainerD.appendChild(img);
+          });
+          document.getElementById("dealerTotal").textContent = data.dealerPoints;
+      } else {
+          if (data.dealerHandList.length > 0 ){
+              const firstCard = data.dealerHandList[0];
+              const img1 = document.createElement("img");
+              img1.src = "Cards/" + convertToFilename(firstCard);
+              img1.alt = firstCard;
+              img1.style.height = "30px";
+              cardContainerD.appendChild(img1);
+              }
+              const backImg = document.createElement("img");
+              backImg.src = "Cards/back.png";
+              backImg.alt = "Hidden";
+              backImg.style.height = "30px";
+              backImg.style.marginRight = "5px";
+              cardContainerD.appendChild(backImg);
+          }
+  }
+
+  function convertToFilename(card) {
+      const suitMap = {
+          '♥': 'H',
+          '♦': 'D',
+          '♠': 'K',
+          '♣': 'S'
+      };
+      const suit = suitMap[card[0]];
+      const rank = card.slice(1);
+      return `${rank}${suit}.png`;
+  }
+
+  function showResult(data) {
+      // show status
+      document.getElementById("status").textContent = data.result;
+  }
+
+  function cheat(data){
+      fetch("http://localhost:8080/api/game/cheat", {method: "POST"})
+          .then(res => res.json())
+          .then(data => {
+          document.getElementById("helpMessage").style.display = "none";
+              document.getElementById("dealerCards").textContent = data.cheatMessage;
+          });
+
+  }
+
+  function startGame() {
+      fetch("http://localhost:8080/api/game/start", {method: "POST"})
+          .then(res => res.json())
+          .then(data => {
+              document.getElementById("dealerCards").textContent = "";
+              document.getElementById("dealerTotal").textContent = "";
+              document.getElementById("playerCards").textContent = "";
+              document.getElementById("playerTotal").textContent = "";
+              document.getElementById("status").textContent = "";
+
+              start.textContent = "もう一回";
+
+              document.getElementById("hit").style.display = "inline-block";
+              document.getElementById("stand").style.display = "inline-block";
+              document.getElementById("blackjack").style.display = "inline-block";
+              document.getElementById("help").style.display = "inline_block";
+              document.getElementById("start").style.display = "none";
+
+              updateUIPlayer(data);
+              updateUIDealer(data);
+              updateUIAutoPlayer(data);
+
+              if (data.playerPoints == 21) {
+                  document.getElementById("hit").style.display = "none";
+                  document.getElementById("stand").style.display = "none";
+                  document.getElementById("blackjack").style.display = "none";
+                  document.getElementById("help").style.display = "none";
+                  document.getElementById("blackjack").style.display = "inline-block";
+              }
+
+
+          });
+
+  }
+
+  function hit(data) {
+      fetch("http://localhost:8080/api/game/hit", {method: "POST"})
+          .then(res => res.json())
+          .then(data => {
+              document.getElementById("helpMessage").style.display = "none";
+              updateUIPlayer(data);
+              updateUIAutoPlayer(data);
+              if (data.playerPoints > 21) {
+                  document.getElementById("hit").style.display = "none";
+                  document.getElementById("stand").style.display = "none";
+                  document.getElementById("bust").style.display = "inline-block";
+              } else if (data.playerPoints == 21) {
+                  document.getElementById("hit").style.display = "none";
+                  document.getElementById("stand").style.display = "none";
+                  document.getElementById("help").style.display = "none";
+                  document.getElementById("blackjack").style.display = "inline-block";
+              }
+          });
+  }
+
+  function stand() {
+      fetch("http://localhost:8080/api/game/stand", {method: "POST"})
+          .then(res => res.json())
+          .then(data => {
+              updateUIPlayer(data);
+              updateUIDealer(data);
+              updateUIAutoPlayer(data);
+
+              document.getElementById("hit").style.display = "none";
+              document.getElementById("stand").style.display = "none";
+              document.getElementById("bust").style.display = "none";
+              document.getElementById("blackjack").style.display = "none";
+              document.getElementById("blackjack").style.display = "none";
+              document.getElementById("help").style.display = "none";
+              document.getElementById("judge").style.display = "inline-block";
+          });
+
+  }
+
+  function judge(data) {
+      fetch("http://localhost:8080/api/game/state", {method: "POST"})
+          .then(res => res.json())
+          .then(data => {
+              updateUIPlayerFinal(data);
+              showResult(data);
+              document.getElementById("start").style.display = "inline-block";
+              document.getElementById("judge").style.display = "none";
+
+              if (data.accumulationPlayer - data.accumulationDealer >= 5) {
+                  dealerPic.src = "biteDealersButt.png"
+              }
+
+
+          });
+
+  }
+
+
+</script>
+</body>
+
+</html>
