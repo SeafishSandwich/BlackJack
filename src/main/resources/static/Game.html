@@ -347,7 +347,7 @@
   }
 
   function startGame() {
-      fetch("/api/game/start", {method: "POST"})
+      fetch("/api/game/start", {method: "POST"}) //debug
           .then(res => res.json())
           .then(data => {
               document.getElementById("dealerCards").textContent = "";
