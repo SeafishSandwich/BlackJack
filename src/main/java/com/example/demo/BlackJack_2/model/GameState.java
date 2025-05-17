@@ -13,10 +13,11 @@ public class GameState {
 	public int accumulationPlayer;
 	public int accumulationDealer;
 	public String  cheatMessage;
+	public double cheatMessageD;
 
 	public GameState(int playerPoints, int dealerPoints, boolean gameOver, String result,
 			List<String>playerHandList, List<String> dealerHandList, int accumulationPlayer,
-					 int accumulationDealer, List<String> autoPlayerHandList, String  cheatMessage) {
+					 int accumulationDealer, List<String> autoPlayerHandList, String  cheatMessage, double cheatMessageD) {
 		this.playerPoints = playerPoints;
 		this.dealerPoints = dealerPoints;
 		this.gameOver = gameOver;
@@ -27,6 +28,7 @@ public class GameState {
 		this.accumulationPlayer = accumulationPlayer;
 		this.accumulationDealer = accumulationDealer;
 		this.cheatMessage = cheatMessage;
+		this.cheatMessageD = cheatMessageD;
 	}
 	
 	public GameState() {// for JSON Serialization

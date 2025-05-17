@@ -133,7 +133,7 @@
             style="color: darkblue; position: absolute; bottom: 0; left:50%; transform: translateX(-50%); border-collapse: collapse;">
       <tr>
         <td>
-          <strong>あなたの手札:</strong>
+          <strong>你的手牌:</strong>
         </td>
         <td>
           <div style="line-height: 3;" id="playerCards" class="cards"></div>
@@ -141,7 +141,7 @@
       </tr>
       <tr>
         <td>
-          <div>あなたの点数: </div>
+          <div>你的点数: </div>
         </td>
         <td>
           <span id="playerTotal"></span>
@@ -149,7 +149,7 @@
       </tr>
       <tr>
         <td style="margin: auto;">
-          <img style="margin: auto; width: 40px; height: 40px;" src="coin.png" alt=""> あなたのチップ:
+          <img style="margin: auto; width: 40px; height: 40px;" src="coin.png" alt=""> 你的筹码:
         </td>
         <td>
           <span id="accumulation"></span>
@@ -167,7 +167,7 @@
       🃏 Blackjack
       <tr>
         <td>
-          <strong>ディーラーの手札:</strong>
+          <strong>庄家手牌:</strong>
         </td>
         <td>
           <span style="line-height: 3;" id="dealerCards" class="cards"></span>
@@ -176,7 +176,7 @@
       </tr>
       <tr>
         <td>
-          <div>ディーラーの点数: </div>
+          <div>庄家点数: </div>
         </td>
         <td>
           <span id="dealerTotal"></span>
@@ -184,7 +184,7 @@
       </tr>
       <tr>
         <td style="margin: auto; padding: 2px;">
-          <img style=" width: 40px; height: 40px;" src="coin.png" alt=""> チップ：
+          <img style=" width: 40px; height: 40px;" src="coin.png" alt=""> 庄家的筹码：
         </td>
         <td>
           <span id="accumulationD"></span>
@@ -198,7 +198,7 @@
 		width: 220px;height: 140px;">
       <tr>
         <td>
-          <strong>モブの手札:</strong>
+          <strong>不重要的玩家的手牌:</strong>
         </td>
         <td>
           <span style="line-height: 3;" id="autoPlayerCards" class="cards"></span>
@@ -210,26 +210,28 @@
 
   <div>
 			<span class="result" style="position: absolute; left: 50%; bottom: 30%; transform: translateX(-50%)"
-                  id="status">結果：</span>
+                  id="status">胜负：</span>
   </div>
 
-  <div id = "helpMessage" class="result" style="position: absolute; left: 80%; bottom: 20%; transform: translateX(-50%)">
-            <span>Rate to BUST:</span>
+  <div id = "helpMessage" style="position: absolute; left: 80%; bottom: 20%; transform: translateX(-50%)">
+            <span>爆牌率:</span>
             <span id = "getHelp"></span>
+            <span>庄家爆牌率:</span>
+            <span id = "getHelpD"></span>
   </div>
 
 </div>
 
 <button style="position: absolute; left: 80%; bottom: 10%;" class="button" onclick="startGame()"
-        id="start">ゲームスタート</button>
-<button style="position: absolute; left: 70%; bottom: 10%;" class="button" onclick="hit()" id="hit">ヒット</button>
+        id="start">游戏开始</button>
+<button style="position: absolute; left: 70%; bottom: 10%;" class="button" onclick="hit()" id="hit">要牌</button>
 <button style="position: absolute; left: 90%; bottom: 10%;" class="button" onclick="stand()"
-        id="stand">スタンド</button>
-<button style="position: absolute; left: 80%; bottom: 10%;" class="button" onclick="stand()" id="bust">BUST</button>
-<button style="position: absolute; left: 80%; bottom: 10%;" class="button" onclick="judge()" id="judge">勝負！</button>
+        id="stand">停牌</button>
+<button style="position: absolute; left: 80%; bottom: 10%;" class="button" onclick="stand()" id="bust">爆牌！</button>
+<button style="position: absolute; left: 80%; bottom: 10%;" class="button" onclick="judge()" id="judge">点数决胜</button>
 <button style="position: absolute; left: 80%; bottom: 10%;" class="button" onclick="stand()" id="blackjack">BLACK
   JACK！</button>
-<button style="color: red; position: absolute; left: 80%; bottom: 10%;" class="button" onclick="cheat()" id="help">HELP!</button>
+<button style="color: red; position: absolute; left: 80%; bottom: 10%;" class="button" onclick="cheat()" id="help">帮帮忙</button>
 
 <div style="align-items: end;">
 
@@ -334,17 +336,18 @@
   }
 
   function cheat(data){
-      fetch("http://localhost:8080/api/game/cheat", {method: "POST"})
+      fetch("/api/game/cheat", {method: "POST"})
           .then(res => res.json())
           .then(data => {
-          document.getElementById("helpMessage").style.display = "none";
-              document.getElementById("dealerCards").textContent = data.cheatMessage;
+              document.getElementById("helpMessage").style.display = "inline-block";
+              document.getElementById("getHelp").textContent = data.cheatMessage;
+              document.getElementById("getHelpD").textContent = data.cheatMessageD;
           });
 
   }
 
   function startGame() {
-      fetch("http://localhost:8080/api/game/start", {method: "POST"})
+      fetch("/api/game/start", {method: "POST"})
           .then(res => res.json())
           .then(data => {
               document.getElementById("dealerCards").textContent = "";
@@ -353,12 +356,11 @@
               document.getElementById("playerTotal").textContent = "";
               document.getElementById("status").textContent = "";
 
-              start.textContent = "もう一回";
+              start.textContent = "再来一把";
 
               document.getElementById("hit").style.display = "inline-block";
               document.getElementById("stand").style.display = "inline-block";
-              document.getElementById("blackjack").style.display = "inline-block";
-              document.getElementById("help").style.display = "inline_block";
+              document.getElementById("help").style.display = "inline-block";
               document.getElementById("start").style.display = "none";
 
               updateUIPlayer(data);
@@ -368,7 +370,6 @@
               if (data.playerPoints == 21) {
                   document.getElementById("hit").style.display = "none";
                   document.getElementById("stand").style.display = "none";
-                  document.getElementById("blackjack").style.display = "none";
                   document.getElementById("help").style.display = "none";
                   document.getElementById("blackjack").style.display = "inline-block";
               }
@@ -379,13 +380,14 @@
   }
 
   function hit(data) {
-      fetch("http://localhost:8080/api/game/hit", {method: "POST"})
+      fetch("/api/game/hit", {method: "POST"})
           .then(res => res.json())
           .then(data => {
               document.getElementById("helpMessage").style.display = "none";
               updateUIPlayer(data);
               updateUIAutoPlayer(data);
               if (data.playerPoints > 21) {
+                  document.getElementById("help").style.display = "none";
                   document.getElementById("hit").style.display = "none";
                   document.getElementById("stand").style.display = "none";
                   document.getElementById("bust").style.display = "inline-block";
@@ -399,7 +401,7 @@
   }
 
   function stand() {
-      fetch("http://localhost:8080/api/game/stand", {method: "POST"})
+      fetch("/api/game/stand", {method: "POST"})
           .then(res => res.json())
           .then(data => {
               updateUIPlayer(data);
@@ -418,7 +420,7 @@
   }
 
   function judge(data) {
-      fetch("http://localhost:8080/api/game/state", {method: "POST"})
+      fetch("/api/game/state", {method: "POST"})
           .then(res => res.json())
           .then(data => {
               updateUIPlayerFinal(data);

@@ -19,6 +19,7 @@ public class GameSession {
 	private int accumulationPlayer;
 	private int accumulationDealer;
 	private String cheatMessage;
+	private double cheatMessageD;
 
 	public int getAccumulationPlayer(){
 		return accumulationPlayer;
@@ -100,10 +101,12 @@ public class GameSession {
 	public GameState Cheat() {
 		List<Integer> cheaterDeck = cheater.getCheaterDeck();
 		int playerValue = player.getSumPoints();
+		int dealerValue = dealer.getDealerSum();
 		int valueNotBust = 21 - playerValue;
+		int valueDealerBust = 21 - dealerValue;
 		
 		double bustRate = 0.0;
-		cheatMessage = Double.toString(bustRate);
+
 		if(valueNotBust > 11) {
 			cheatMessage = "Just Draw";
 		}else {
@@ -115,6 +118,16 @@ public class GameSession {
 			}
 			bustRate = (double) count / cheaterDeck.size();
 		}
+		int countD = 0;
+		for (int values: cheaterDeck) {
+			if (values > valueDealerBust) {
+				countD += 1;
+			}
+		}
+		cheatMessageD = (double) countD / cheaterDeck.size();
+		cheatMessage = Double.toString(bustRate);
+
+
 		return getState();	
 		
 	}
@@ -125,23 +138,23 @@ public class GameSession {
 		String result = null;
 		
 		if (playerSum == dealerSum && dealerSum < 21 || playerSum == 21 && dealerSum ==21) {
-			result = "引き分け";
+			result = "平手";
 		} else if (playerSum < dealerSum&& dealerSum<= 21 ) {
-			result =  "You Lose";
+			result =  "你输了";
 		} else if (playerSum> dealerSum && playerSum <21 ) {
-			result = "You Win!";
+			result = "你赢了！";
 		} else if(playerSum == 21 && dealerSum != 21){
-			result = "BlackJack! You Win!";
+			result = "BlackJack! 你赢了！";
 		} else if (dealerSum > 21 && playerSum < 21) {
-			result = "ディーラー BUST!You Win!" ;
+			result = "庄家爆牌！你赢了！" ;
 		} else if(playerSum >21) {
-			result = "You BUST！You Lose";
+			result = "你爆牌了！你输了";
 		}else {
-			result = "No idea what happened.";
+			result = "写代码的忘了考虑这种情况orz";
 		}
 		
 		return new GameState(player.getSumPoints(),dealer.getDealerSum(), gameOver, result,
-				player.getHandStrings(), dealer.getHandStrings(), accumulationPlayer, accumulationDealer, autoPlayer.getHandStrings(), cheatMessage);
+				player.getHandStrings(), dealer.getHandStrings(), accumulationPlayer, accumulationDealer, autoPlayer.getHandStrings(), cheatMessage, cheatMessageD);
 	}
 	
 	
