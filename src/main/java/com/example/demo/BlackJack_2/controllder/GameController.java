@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/game")
 
 public class GameController {
-    private final GameSession gameSession;
+    private GameSession gameSession;
     public GameController(GameSession gameSession){
 
         this.gameSession = gameSession;
